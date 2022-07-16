@@ -26,8 +26,18 @@ team_name = "SACRAMENTOSPLITTAILS"
 # code is intended to be a working example, but it needs some improvement
 # before it will start making good trades!
 
+bond_pos = -100
+gs_pos = 0
+ms_pos = 0
+usd_pos = 0
+valbz_pos = 0
+vale_pos = 0
+xlf_pos = 0
 
 def main():
+    
+
+
     args = parse_arguments()
 
     exchange = ExchangeConnection(args=args)
@@ -56,8 +66,7 @@ def main():
     bond_bid_price, bond_ask_price = None, None
     bond_last_print_time = time.time()
 
-
-
+    
 
     # Here is the main loop of the program. It will continue to read and
     # process messages in a loop until a "close" message is received. You
@@ -72,6 +81,10 @@ def main():
     # cause a feedback loop where your bot's messages will quickly be
     # rate-limited and ignored. Please, don't do that!
     while True:
+      
+      
+        
+        
         message = exchange.read_message()
 
         # Some of the message types below happen infrequently and contain
@@ -90,7 +103,6 @@ def main():
         elif message["type"] == "fill":
             print(message)
         elif message["type"] == "book":
-            print("REACHED")
             if message["symbol"] == "VALE":
 
                 def best_price(side):
@@ -120,9 +132,8 @@ def main():
                 bond_bid_price = best_price("buy")
                 bond_ask_price = best_price("sell")
 
-                print("BOND ASK PRICE: " + bond_ask_price)
 
-                if (bond_ask_price < 1010):
+                if (bond_ask_price != None and bond_ask_price < 1010):
                     exchange.send_add_message(order_id=id, symbol="BOND", dir=Dir.BUY, price=bond_ask_price, size=1)
                     id = id + 1
                     print(
@@ -131,12 +142,12 @@ def main():
                         }
                     )
 
-                if (bond_bid_price > 1000):
+                if (bond_bid_price != None and bond_bid_price > 1000):
                     exchange.send_add_message(order_id=id, symbol="BOND", dir=Dir.SELL, price=bond_bid_price, size=1)
                     id = id + 1
                     print(
                         {
-                            "offed bond sell": bond_bid_price
+                            "offered bond sell": bond_bid_price
                         }
                     )
 
