@@ -89,20 +89,20 @@ def main():
     # message. Sending a message in response to every exchange message will
     # cause a feedback loop where your bot's messages will quickly be
     # rate-limited and ignored. Please, don't do that!
-    
+
     counter = 0
 
-    exchange.send_add_message(order_id=id, symbol="BOND", dir=Dir.BUY, price=999, size=25)
+    exchange.send_add_message(order_id=id, symbol="BOND", dir=Dir.BUY, price=999, size=100)
     id = id + 1
-    exchange.send_add_message(order_id=id, symbol="BOND", dir=Dir.SELL, price=1001, size=25)
+    exchange.send_add_message(order_id=id, symbol="BOND", dir=Dir.SELL, price=1001, size=100)
     id = id + 1
 
 
     while True:
         if (counter % 100 == 0):
-          exchange.send_add_message(order_id=id, symbol="BOND", dir=Dir.BUY, price=999, size=25)
+          exchange.send_add_message(order_id=id, symbol="BOND", dir=Dir.BUY, price=999, size=100)
           id = id + 1
-          exchange.send_add_message(order_id=id, symbol="BOND", dir=Dir.SELL, price=1001, size=25)
+          exchange.send_add_message(order_id=id, symbol="BOND", dir=Dir.SELL, price=1001, size=100)
           id = id + 1
         counter += 1
 
@@ -132,7 +132,9 @@ def main():
 
                 bond_bid_price = best_price("buy")
                 bond_ask_price = best_price("sell")
-                bond_val = (bond_bid_price + bond_ask_price) / 2
+
+                if (bond_bid_price != None and bond_ask_price != None):
+                  bond_val = (bond_bid_price + bond_ask_price) / 2
 
                 now = time.time()
 
@@ -206,7 +208,8 @@ def main():
                 gs_bid_price = best_price("buy")
                 gs_ask_price = best_price("sell")
 
-                gs_val = (gs_bid_price + gs_ask_price) / 2
+                if (gs_bid_price != None and gs_ask_price != None):
+                  gs_val = (gs_bid_price + gs_ask_price) / 2
 
             if message["symbol"] == "MS":
                 def best_price(side):
@@ -216,7 +219,9 @@ def main():
                 ms_bid_price = best_price("buy")
                 ms_ask_price = best_price("sell")
 
-                ms_val = (ms_bid_price + ms_ask_price) / 2
+                if (ms_bid_price != None and ms_ask_price != None):
+                  ms_val = (ms_bid_price + ms_ask_price) / 2
+
 
             if message["symbol"] == "WFC":
                 def best_price(side):
@@ -226,7 +231,9 @@ def main():
                 wfc_bid_price = best_price("buy")
                 wfc_ask_price = best_price("sell")
 
-                wfc_val = (wfc_bid_price + wfc_ask_price) / 2
+
+                if (wfc_bid_price != None and wfc_ask_price != None):
+                  wfc_val = (wfc_bid_price + wfc_ask_price) / 2
 
             if message["symbol"] == "XLF":
                 def best_price(side):
@@ -290,6 +297,9 @@ def main():
                             "valbz_ask_price": valbz_ask_price,
                         }
                     )
+
+
+
 
 
 
