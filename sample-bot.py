@@ -26,8 +26,18 @@ team_name = "SACRAMENTOSPLITTAILS"
 # code is intended to be a working example, but it needs some improvement
 # before it will start making good trades!
 
+bond_pos = -100
+gs_pos = 0
+ms_pos = 0
+usd_pos = 0
+valbz_pos = 0
+vale_pos = 0
+xlf_pos = 0
 
 def main():
+
+
+
     args = parse_arguments()
 
     exchange = ExchangeConnection(args=args)
@@ -120,9 +130,9 @@ def main():
                 bond_bid_price = best_price("buy")
                 bond_ask_price = best_price("sell")
 
-                print("BOND ASK PRICE: " + bond_ask_price)
-
                 if (bond_ask_price < 1010):
+
+                if (bond_ask_price != None and bond_ask_price < 1010):
                     exchange.send_add_message(order_id=id, symbol="BOND", dir=Dir.BUY, price=bond_ask_price, size=1)
                     id = id + 1
                     print(
@@ -131,12 +141,13 @@ def main():
                         }
                     )
 
-                if (bond_bid_price > 1000):
+                if (bond_bid_price != None and bond_bid_price > 1000):
                     exchange.send_add_message(order_id=id, symbol="BOND", dir=Dir.SELL, price=bond_bid_price, size=1)
                     id = id + 1
                     print(
                         {
                             "offed bond sell": bond_bid_price
+                            "offered bond sell": bond_bid_price
                         }
                     )
 
