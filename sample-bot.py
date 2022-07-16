@@ -230,9 +230,15 @@ def main():
 
                 wfc_bid_price = best_price("buy")
                 wfc_ask_price = best_price("sell")
+<<<<<<< HEAD
 
 
                 if (wfc_bid_price != None and wfc_ask_price != None):
+=======
+                
+              
+                if (wfc_bid_price != None and wfc_ask_price != None): 
+>>>>>>> 4d711a56cf1b3933cf873718c74e1534fbadb191
                   wfc_val = (wfc_bid_price + wfc_ask_price) / 2
 
             if message["symbol"] == "XLF":
