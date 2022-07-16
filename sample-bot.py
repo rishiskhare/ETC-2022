@@ -34,9 +34,15 @@ valbz_pos = 0
 vale_pos = 0
 xlf_pos = 0
 
+xlf_fair_val = None
+
+
 def main():
 
-
+    bond_val = None
+    gs_val = None
+    ms_val = None
+    wfc_val = None
 
     args = parse_arguments()
 
@@ -111,6 +117,7 @@ def main():
 
                 bond_bid_price = best_price("buy")
                 bond_ask_price = best_price("sell")
+                bond_val = (bond_bid_price + bond_ask_price) / 2
 
                 if (bond_ask_price != None and bond_ask_price < 1000):
                     exchange.send_add_message(order_id=id, symbol="BOND", dir=Dir.BUY, price=bond_ask_price, size=1)
@@ -126,7 +133,6 @@ def main():
                     id = id + 1
                     print(
                         {
-                            "offed bond sell": bond_bid_price
                             "offered bond sell": bond_bid_price
                         }
                     )
@@ -138,88 +144,152 @@ def main():
                     print(
                         {
                             "bond_bid_price": bond_bid_price,
-                            "bond_ask_price": bond_ask_price,
+                            "bond_ask_price": bond_ask_price
                         }
                     )
 
-        if message["symbol"] == "VALE":
-            def best_price(side):
-                if message[side]:
-                    return message[side][0][0]
+            if message["symbol"] == "VALE":
+                def best_price(side):
+                    if message[side]:
+                        return message[side][0][0]
 
-            vale_bid_price = best_price("buy")
-            vale_ask_price = best_price("sell")
+                vale_bid_price = best_price("buy")
+                vale_ask_price = best_price("sell")
 
-            if (vale_ask_price != None and valbz_bid_price != None):
-                if (vale_ask_price < valbz_bid_price):
-                    exchange.send_add_message(order_id=id, symbol="VALE", dir=Dir.BUY, price=vale_ask_price, size=1) #update size
-                    id = id + 1
+                if (vale_ask_price != None and valbz_bid_price != None):
+                    if (vale_ask_price < valbz_bid_price):
+                        exchange.send_add_message(order_id=id, symbol="VALE", dir=Dir.BUY, price=vale_ask_price, size=1) #update size
+                        id = id + 1
+                        print(
+                            {
+                                "offered vale buy": vale_ask_price
+                            }
+                        )
+                        exchange.send_convert_message(order_id=id, symbol="VALE", dir=Dir.SELL, size=1)
+                        id = id + 1
+                        print("converted VALE to VALBZ")
+                        exchange.send_add_message(order_id=id, symbol="VALBZ", dir=Dir.SELL, price=valbz_bid_price, size=1) #update size
+                        id = id + 1
+                        print(
+                            {
+                                "offered valbz sell": valbz_bid_price
+                            }
+                        )
+
+                now = time.time()
+
+                if now > bond_last_print_time + 1:
+                    vale_last_print_time = now
                     print(
                         {
-                            "offered vale buy": vale_ask_price
+                            "vale_bid_price": vale_bid_price,
+                            "vale_ask_price": vale_ask_price,
                         }
                     )
-                    exchange.send_convert_message(order_id=id, symbol="VALE", dir=Dir.SELL, size=1)
-                    id = id + 1
-                    print("converted VALE to VALBZ")
-                    exchange.send_add_message(order_id=id, symbol="VALBZ", dir=Dir.SELL, price=valbz_bid_price, size=1) #update size
-                    id = id + 1
+
+
+            if message["symbol"] == "VALBZ":
+                def best_price(side):
+                    if message[side]:
+                        return message[side][0][0]
+
+                valbz_bid_price = best_price("buy")
+                valbz_ask_price = best_price("sell")
+
+                if (valbz_ask_price != None and vale_bid_price != None):
+                    if (valbz_ask_price < vale_bid_price):
+                        exchange.send_add_message(order_id=id, symbol="VALBZ", dir=Dir.BUY, price=valbz_ask_price, size=1) #update size
+                        id = id + 1
+                        print(
+                            {
+                                "offered valbz buy": valbz_ask_price
+                            }
+                        )
+                        exchange.send_convert_message(order_id=id, symbol="VALBZ", dir=Dir.SELL, size=1)
+                        id = id + 1
+                        print("converted VALBZ to VALE")
+                        exchange.send_add_message(order_id=id, symbol="VALE", dir=Dir.SELL, price=vale_bid_price, size=1) #update size
+                        id = id + 1
+                        print(
+                            {
+                                "offered vale sell": vale_bid_price
+                            }
+                        )
+
+                now = time.time()
+
+                if now > bond_last_print_time + 1:
+                    valbz_last_print_time = now
                     print(
                         {
-                            "offered valbz sell": valbz_bid_price
+                            "valbz_bid_price": valbz_bid_price,
+                            "valbz_ask_price": valbz_ask_price,
                         }
                     )
 
-            now = time.time()
-
-            if now > bond_last_print_time + 1:
-                vale_last_print_time = now
-                print(
-                    {
-                        "vale_bid_price": vale_bid_price,
-                        "vale_ask_price": vale_ask_price,
-                    }
-                )
 
 
-        if message["symbol"] == "VALBZ":
-            def best_price(side):
-                if message[side]:
-                    return message[side][0][0]
+            if message["symbol"] == "GS":
+                def best_price(side):
+                    if message[side]:
+                        return message[side][0][0]
 
-            valbz_bid_price = best_price("buy")
-            valbz_ask_price = best_price("sell")
+                gs_bid_price = best_price("buy")
+                gs_ask_price = best_price("sell")
 
-            if (valbz_ask_price != None and vale_bid_price != None):
-                if (valbz_ask_price < vale_bid_price):
-                    exchange.send_add_message(order_id=id, symbol="VALBZ", dir=Dir.BUY, price=valbz_ask_price, size=1) #update size
-                    id = id + 1
-                    print(
-                        {
-                            "offered valbz buy": valbz_ask_price
-                        }
-                    )
-                    exchange.send_convert_message(order_id=id, symbol="VALBZ", dir=Dir.SELL, size=1)
-                    id = id + 1
-                    print("converted VALBZ to VALE")
-                    exchange.send_add_message(order_id=id, symbol="VALE", dir=Dir.SELL, price=vale_bid_price, size=1) #update size
-                    id = id + 1
-                    print(
-                        {
-                            "offered vale sell": vale_bid_price
-                        }
-                    )
+                gs_val = (gs_bid_price + gs_ask_price) / 2
 
-            now = time.time()
+            if message["symbol"] == "MS":
+                def best_price(side):
+                    if message[side]:
+                        return message[side][0][0]
 
-            if now > bond_last_print_time + 1:
-                valbz_last_print_time = now
-                print(
-                    {
-                        "valbz_bid_price": valbz_bid_price,
-                        "valbz_ask_price": valbz_ask_price,
-                    }
-                )
+                ms_bid_price = best_price("buy")
+                ms_ask_price = best_price("sell")
+
+                ms_val = (ms_bid_price + ms_ask_price) / 2
+
+            if message["symbol"] == "WFC":
+                def best_price(side):
+                    if message[side]:
+                        return message[side][0][0]
+
+                wfc_bid_price = best_price("buy")
+                wfc_ask_price = best_price("sell")
+
+                wfc_val = (wfc_bid_price + wfc_ask_price) / 2
+
+            if message["symbol"] == "XLF":
+                def best_price(side):
+                    if message[side]:
+                        return message[side][0][0]
+
+                xlf_bid_price = best_price("buy")
+                xlf_ask_price = best_price("sell")
+
+                if (bond_val != None and gs_val != None and ms_val != None and wfc_val != None):
+                    xlf_fair_val = (3*bond_val + 2*gs_val + 3*ms_val + 2*wfc_val) / 10
+
+                    xlf_order_buy = xlf_fair_val - 10
+                    xlf_order_sell = xlf_fair_val + 10
+
+                    # exchange.send_add_message(order_id=id, symbol="XLF", dir=Dir.BUY, price=xlf_order_buy, size=10) #update size
+                    # id = id + 1
+                    # print("offered xlf buy: ", valbz_ask_price)
+
+
+                    # exchange.send_add_message(order_id=id, symbol="XLF", dir=Dir.SELL, price=xlf_order_sell, size=10) #update size
+                    # id = id + 1
+                    # print("offered xlf sell: ", valbz_ask_price)
+
+
+
+
+
+
+
+
+
 
 
 
