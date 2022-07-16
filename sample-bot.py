@@ -93,13 +93,17 @@ def main():
     counter = 0
 
     exchange.send_add_message(order_id=id, symbol="BOND", dir=Dir.BUY, price=999, size=25)
+    id = id + 1
     exchange.send_add_message(order_id=id, symbol="BOND", dir=Dir.SELL, price=1001, size=25)
+    id = id + 1
 
 
     while True:
         if (counter % 100 == 0):
           exchange.send_add_message(order_id=id, symbol="BOND", dir=Dir.BUY, price=999, size=25)
+          id = id + 1
           exchange.send_add_message(order_id=id, symbol="BOND", dir=Dir.SELL, price=1001, size=25)
+          id = id + 1
         counter += 1
 
         message = exchange.read_message()
